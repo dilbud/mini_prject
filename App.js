@@ -1,19 +1,29 @@
+import 'react-native-gesture-handler';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// navigation
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+// redux and async thunk
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import { Provider } from 'react-redux';
+// navigation imports
+import RootNavigation from './navigation/RootNavigation';
+// reducer imports
+import AuthReducer from './store/reducers/AuthReducer';
 
+// combine reducers
+const rootReducer = combineReducers({
+  Auth: AuthReducer,
+});
+// create store with middleware
+const store = createStore(rootReducer, applyMiddleware(thunk));
+// render app
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <RootNavigation />
+      </SafeAreaProvider>
+    </Provider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
