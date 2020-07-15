@@ -63,12 +63,7 @@ export default ProfileScreen = ({ navigation }) => {
       <View style={{ backgroundColor: 'red' }}>
         <Text>Home Screen</Text>
       </View>
-      <Button
-        title="Go to User"
-        onPress={() => {
-          navigation.navigate('login');
-        }}
-      />
+      <Button title="Go to User" onPress={() => {}} />
     </SafeAreaView>
   );
 };
