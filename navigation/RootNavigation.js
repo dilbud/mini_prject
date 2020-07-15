@@ -13,8 +13,8 @@ import AuthNavigation from './AuthNavigation';
 const Stack = createStackNavigator();
 
 export default RootNavigation = (props) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userToken, setUserToken] = useState(null);
+  const [IsLoading, setIsLoading] = useState(true);
+  const [UserToken, setUserToken] = useState(null);
 
   const dispatch = useDispatch();
   const state = useSelector((state) => state.Auth);
@@ -56,7 +56,7 @@ export default RootNavigation = (props) => {
 
   return (
     <NavigationContainer ref={navigationRef}>
-      {isLoading ? (
+      {IsLoading ? (
         <Stack.Navigator>
           <Stack.Screen
             name="Splash"
@@ -64,7 +64,7 @@ export default RootNavigation = (props) => {
             options={{ headerShown: false }}
           />
         </Stack.Navigator>
-      ) : userToken == null ? (
+      ) : UserToken == null ? (
         <>
           <AuthNavigation />
         </>

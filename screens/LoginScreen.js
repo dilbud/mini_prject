@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { signin } from '../store/actions/AuthAction';
 
 export default LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [Email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
 
   const dispatch = useDispatch();
   const state = useSelector((state) => state.Auth);
@@ -39,7 +39,7 @@ export default LoginScreen = ({ navigation }) => {
           containerViewStyle={{ width: '100%', marginLeft: 0, marginRight: 0 }}
           title="LOGIN"
           onPress={() => {
-            dispatch(signin(email, password));
+            dispatch(signin(Email, Password));
           }}
         />
       </View>

@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { StyleSheet, View, TextInput, Button } from 'react-native';
-
+import { Icon } from 'react-native-elements';
 export default MsgInput = (props) => {
   const [message, setMessage] = useState('');
 
@@ -21,8 +21,13 @@ export default MsgInput = (props) => {
           placeholder="Write you message"
         />
       </View>
-
-      <Button title="Send" onPress={handlePress} />
+      <Icon
+        raised
+        name="paper-plane"
+        type="font-awesome"
+        color="#7ed885"
+        onPress={() => console.log('hello')}
+      />
     </View>
   );
 };
@@ -39,9 +44,9 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'red',
+    borderColor: '#c5c9cc',
     borderWidth: 1,
-    borderRadius: 3,
+    borderRadius: 50,
     flexDirection: 'row',
     paddingHorizontal: 10,
   },

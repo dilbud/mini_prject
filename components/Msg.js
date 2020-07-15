@@ -31,10 +31,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-start',
+    backgroundColor: '#dfe2e5',
   },
   textContainer: {
     width: 160,
-    backgroundColor: 'blue',
+    backgroundColor: '#a0a0ff',
 
     borderRadius: 40,
     paddingHorizontal: 15,
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   rightTextContainer: {
-    backgroundColor: 'green',
+    backgroundColor: '#caffc9',
     marginRight: 10,
   },
   leftText: {

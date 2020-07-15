@@ -143,14 +143,17 @@ export default HomeScreen = ({ navigation }) => {
   ];
 
   const renderItem = ({ item }) => (
-    <ListItem
-      title={item.name}
-      subtitle={item.subtitle}
-      leftAvatar={{ source: { uri: item.avatar_url } }}
+    <TouchableOpacity
       onPress={() => navigation.navigate('chat', { name: 'Dilan' })}
-      bottomDivider
-      chevron
-    />
+    >
+      <ListItem
+        title={item.name}
+        subtitle={item.subtitle}
+        leftAvatar={{ source: { uri: item.avatar_url } }}
+        bottomDivider
+        chevron
+      />
+    </TouchableOpacity>
   );
 
   return (

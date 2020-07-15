@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
+import { Button } from 'react-native-elements';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import QRCode from 'react-native-qrcode-svg';
 
-export default AddUserScreen = () => {
-  const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-  const [toggle, setToggle] = useState(true);
+export default AddUserScreen = ({ navigation }) => {
+  const [HasPermission, setHasPermission] = useState(null);
+  const [Scanned, setScanned] = useState(false);
+  const [Toggle, setToggle] = useState(true);
+  const [Data, setData] = useState(null);
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Add Friends',
+      headerStyle: {
+        backgroundColor: '#dffff0',
+      },
+    });
+  }, [navigation]);
 
   useEffect(() => {
     (async () => {
@@ -17,13 +28,13 @@ export default AddUserScreen = () => {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    setData(data);
   };
 
-  if (hasPermission === null) {
+  if (HasPermission === null) {
     return <Text>Requesting for camera permission</Text>;
   }
-  if (hasPermission === false) {
+  if (HasPermission === false) {
     return <Text>No access to camera</Text>;
   }
 
@@ -47,7 +58,13 @@ export default AddUserScreen = () => {
           }}
         >
           <Button
-            title={'Tap to Scan QR'}
+            buttonStyle={{ borderRadius: 20 }}
+            containerViewStyle={{
+              width: '100%',
+              marginLeft: 0,
+              marginRight: 0,
+            }}
+            title="Tap to Scan QR"
             onPress={() => {
               setToggle(false);
             }}
@@ -67,23 +84,45 @@ export default AddUserScreen = () => {
         }}
       >
         <BarCodeScanner
-          onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
+          onBarCodeScanned={Scanned ? undefined : handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
         />
 
-        {scanned && (
+        {Scanned && (
           <View style={{ width: '50%', marginBottom: 50, alignSelf: 'center' }}>
-            <Button title={'Tap to Scan'} onPress={() => setScanned(false)} />
+            <Button
+              buttonStyle={{ borderRadius: 20 }}
+              containerViewStyle={{
+                width: '100%',
+                marginLeft: 0,
+                marginRight: 0,
+              }}
+              title="Scan Again"
+              onPress={() => {
+                setScanned(false);
+              }}
+            />
           </View>
         )}
         <View style={{ width: '50%', marginBottom: 50, alignSelf: 'center' }}>
-          <Button title={'Go back'} onPress={() => setToggle(true)} />
+          <Button
+            buttonStyle={{ borderRadius: 20 }}
+            containerViewStyle={{
+              width: '100%',
+              marginLeft: 0,
+              marginRight: 0,
+            }}
+            title="Go Back"
+            onPress={() => {
+              setToggle(true);
+            }}
+          />
         </View>
       </View>
     );
   };
 
-  return toggle ? <QrCode /> : <QrScanner />;
+  return Toggle ? <QrCode /> : <QrScanner />;
 };
 const styles = StyleSheet.create({
   MainContainer: {

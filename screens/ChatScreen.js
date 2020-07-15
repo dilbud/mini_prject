@@ -11,6 +11,15 @@ export default ChatScreen = ({ navigation, route }) => {
   const availableMeals = useSelector((state) => state);
 
   useEffect(() => {
+    navigation.setOptions({
+      title: 'Add Friends',
+      headerStyle: {
+        backgroundColor: '#dffff0',
+      },
+    });
+  }, [navigation]);
+
+  useEffect(() => {
     navigation.setOptions({ title: route.params.name });
   }, []);
 
@@ -57,16 +66,15 @@ export default ChatScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   messagesContainer: {
     height: '100%',
-    paddingBottom: 60,
+    paddingBottom: 80,
   },
   inputContainer: {
     width: '100%',
-    height: 60,
+    height: 80,
     position: 'absolute',
     bottom: 0,
     paddingVertical: 10,
-    paddingLeft: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#737373',
+    paddingHorizontal: 10,
+    backgroundColor: '#dfdfdf',
   },
 });

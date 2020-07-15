@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
+import { Icon } from 'react-native-elements';
 
 import { signout } from '../store/actions/AuthAction';
 
@@ -16,22 +17,43 @@ export default ProfileScreen = ({ navigation }) => {
         backgroundColor: '#dffff0',
       },
       headerRight: () => (
-        <TouchableOpacity
+        <View
           style={{
-            width: 100,
-            height: 40,
-            justifyContent: 'center',
+            flexDirection: 'row',
             alignItems: 'center',
-            backgroundColor: '#83ffc5',
+            justifyContent: 'space-between',
             marginRight: 30,
-            borderRadius: 50,
-          }}
-          onPress={() => {
-            dispatch(signout());
+            width: 160,
           }}
         >
-          <Text>{'SIGNOUT'}</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              width: 40,
+              height: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            onPress={() => {}}
+          >
+            <Icon name="user-edit" color="#888888" type="font-awesome-5" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              width: 100,
+              height: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#83ffc5',
+              marginRight: 0,
+              borderRadius: 50,
+            }}
+            onPress={() => {
+              dispatch(signout());
+            }}
+          >
+            <Text>{'SIGNOUT'}</Text>
+          </TouchableOpacity>
+        </View>
       ),
     });
   }, [navigation]);

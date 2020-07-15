@@ -6,8 +6,8 @@ import { Button, Text, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default SignUpScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [Email, setEmail] = useState('');
+  const [Password, setPassword] = useState('');
 
   return (
     <View style={styles.container}>
