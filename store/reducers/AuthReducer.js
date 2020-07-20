@@ -1,10 +1,13 @@
-import { RESTORE_TOKEN, SIGN_OUT, SIGN_IN } from '../actions/AuthAction';
+import {
+  RESTORE_TOKEN,
+  SIGN_OUT,
+  SIGN_IN,
+  SIGN_UP,
+} from '../actions/AuthAction';
 
 const initialState = {
   userToken: null,
   isLoading: true,
-  isSignout: true,
-  isSigup: false,
 };
 
 export default (state = initialState, action) => {
@@ -15,20 +18,22 @@ export default (state = initialState, action) => {
         userToken: action.payload,
         isLoading: false,
       };
+    case SIGN_UP:
+      return {
+        ...state,
+        isLoading: false,
+        userToken: action.payload.token,
+      };
     case SIGN_IN:
       return {
         ...state,
         isLoading: false,
-        isSignout: false,
         userToken: action.payload.token,
       };
     case SIGN_OUT:
       return {
-        ...state,
-        userToken: null,
+        ...initialState,
         isLoading: false,
-        isSignout: true,
-        isSigup: false,
       };
     default:
       return state;

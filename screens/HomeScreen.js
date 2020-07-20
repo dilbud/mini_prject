@@ -1,21 +1,62 @@
-import React, { useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Button,
-  FlatList,
-  TouchableOpacity,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { ListItem, Avatar, Icon } from 'react-native-elements';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
-export default HomeScreen = ({ navigation }) => {
-  const dispatch = useDispatch();
-  const availableMeals = useSelector((state) => state);
+export default HomeScreen = ({ navigation, route }) => {
+  const [List, setList] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const v = await firestore()
+        .collection('users')
+        .doc(auth().currentUser.uid)
+        .get();
+      const list = v.get('rooms').map((value, i) => {
+        return firestore()
+          .collection('users')
+          .doc(value.user)
+          .get()
+          .then((val) => {
+            return {
+              name: val.data().name,
+              avatar_url: val.data().avatar_url ? val.data().avatar_url : null,
+              room: value.room,
+              uId: value.user,
+            };
+          });
+      });
+      Promise.all(list)
+        .then((val) => {
+          setList(val);
+        })
+        .catch((e) => {
+          setList([]);
+        });
+    } catch (error) {}
+  };
 
   useEffect(() => {
+    if (route.params?.refresh) {
+      fetchData();
+    }
+    const prop = () => {
+      if (auth().currentUser.photoURL) {
+        return {
+          source: {
+            uri: auth().currentUser.photoURL,
+          },
+          title: auth().currentUser.displayName[0].toUpperCase(),
+        };
+      } else {
+        return {
+          title: auth().currentUser.displayName[0].toUpperCase(),
+        };
+      }
+    };
+
     navigation.setOptions({
       title: 'CAP',
       headerStyle: {
@@ -57,109 +98,57 @@ export default HomeScreen = ({ navigation }) => {
             }}
           >
             <Avatar
-              containerStyle={{ backgroundColor: '#e2e2e2' }}
+              {...prop()}
+              containerStyle={{ backgroundColor: '#c1c1c1' }}
               rounded
-              title="MT"
             />
           </TouchableOpacity>
         </View>
       ),
     });
-  }, [navigation]);
+  }, [navigation, route.params]);
 
-  const list = [
-    {
-      name: 'Amy Farha',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      subtitle: 'Vice President',
-    },
-    {
-      name: 'Chris Jackson',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      subtitle: 'Vice Chairman',
-    },
-    {
-      name: 'Amy Farha',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      subtitle: 'Vice President',
-    },
-    {
-      name: 'Chris Jackson',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      subtitle: 'Vice Chairman',
-    },
-    {
-      name: 'Amy Farha',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      subtitle: 'Vice President',
-    },
-    {
-      name: 'Chris Jackson',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      subtitle: 'Vice Chairman',
-    },
-    {
-      name: 'Amy Farha',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      subtitle: 'Vice President',
-    },
-    {
-      name: 'Chris Jackson',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      subtitle: 'Vice Chairman',
-    },
-    {
-      name: 'Amy Farha',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      subtitle: 'Vice President',
-    },
-    {
-      name: 'Chris Jackson',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      subtitle: 'Vice Chairman',
-    },
-    {
-      name: 'Amy Farha',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      subtitle: 'Vice President',
-    },
-    {
-      name: 'Chris Jackson',
-      avatar_url:
-        'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      subtitle: 'Vice Chairman',
-    },
-  ];
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('chat', { name: 'Dilan' })}
-    >
-      <ListItem
-        title={item.name}
-        subtitle={item.subtitle}
-        leftAvatar={{ source: { uri: item.avatar_url } }}
-        bottomDivider
-        chevron
-      />
-    </TouchableOpacity>
-  );
+  const renderItem = ({ item }) => {
+    const prop = () => {
+      if (item.avatar_url) {
+        return {
+          leftAvatar: {
+            containerStyle: { backgroundColor: '#c1c1c1' },
+            source: {
+              uri: item.avatar_url,
+            },
+            title: item.name[0].toUpperCase(),
+          },
+        };
+      } else {
+        return {
+          leftAvatar: {
+            containerStyle: { backgroundColor: '#c1c1c1' },
+            title: item.name[0].toUpperCase(),
+          },
+        };
+      }
+    };
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('chat', {
+            name: item.name,
+            proPic: item.avatar_url,
+            uId: item.uId,
+            room: item.room,
+          })
+        }
+      >
+        <ListItem title={item.name} {...prop()} bottomDivider chevron />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <FlatList
       keyExtractor={(item, index) => index.toString()}
-      data={list}
+      data={List}
       renderItem={renderItem}
     />
   );

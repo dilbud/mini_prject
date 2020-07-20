@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
-export default Msg = ({ message, side }) => {
+export default Msg = ({ message, side, time }) => {
   const isLeftSide = side === 'left';
 
   const containerStyles = isLeftSide
@@ -10,14 +10,18 @@ export default Msg = ({ message, side }) => {
   const textContainerStyles = isLeftSide
     ? styles.textContainer
     : flattenedStyles.textContainer;
-  const textStyles = isLeftSide
-    ? flattenedStyles.leftText
-    : flattenedStyles.rightText;
 
   return (
     <View style={containerStyles}>
       <View style={textContainerStyles}>
-        <Text style={textStyles}>{message}</Text>
+        <Text
+          style={{
+            fontSize: 14,
+            textAlign: 'left',
+          }}
+        >
+          {message}
+        </Text>
       </View>
     </View>
   );
@@ -34,10 +38,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#dfe2e5',
   },
   textContainer: {
-    width: 160,
+    maxWidth: 160,
+    width: 'auto',
     backgroundColor: '#a0a0ff',
-
-    borderRadius: 40,
+    borderRadius: 15,
     paddingHorizontal: 15,
     paddingVertical: 12,
     marginLeft: 10,
@@ -49,15 +53,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#caffc9',
     marginRight: 10,
   },
-  leftText: {
-    textAlign: 'left',
-  },
-  rightText: {
-    textAlign: 'right',
-  },
-  text: {
-    fontSize: 12,
-  },
 });
 
 const flattenedStyles = {
@@ -66,6 +61,4 @@ const flattenedStyles = {
     styles.textContainer,
     styles.rightTextContainer,
   ]),
-  leftText: StyleSheet.flatten([styles.leftText, styles.text]),
-  rightText: StyleSheet.flatten([styles.rightText, styles.text]),
 };

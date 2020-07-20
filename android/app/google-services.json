@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "188296822041",
+    "firebase_url": "https://mini-24609.firebaseio.com",
+    "project_id": "mini-24609",
+    "storage_bucket": "mini-24609.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:188296822041:android:15bf6de4e6bc613616d988",
+        "android_client_info": {
+          "package_name": "com.cap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "188296822041-3gse753m3g3p083uc25lf83vhd3oqs21.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2XXtMkI07q2Ix8R7c_nQRUMEqRzKo2ec"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "188296822041-3gse753m3g3p083uc25lf83vhd3oqs21.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

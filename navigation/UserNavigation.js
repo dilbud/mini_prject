@@ -11,7 +11,11 @@ const Stack = createStackNavigator();
 export default UserNavigation = () => {
   return (
     <Stack.Navigator initialRouteName="home">
-      <Stack.Screen name="home" component={HomeScreen} />
+      <Stack.Screen
+        name="home"
+        component={HomeScreen}
+        initialParams={{ refresh: true }}
+      />
       <Stack.Screen name="profile" component={ProfileScreen} />
       <Stack.Screen name="add" component={AddUserScreen} />
       <Stack.Screen name="chat" component={ChatScreen} />

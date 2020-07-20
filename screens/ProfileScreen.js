@@ -1,14 +1,30 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Button, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { Icon } from 'react-native-elements';
-
+import { Icon, Avatar, Text } from 'react-native-elements';
+import { HeaderBackButton } from '@react-navigation/stack';
+import auth from '@react-native-firebase/auth';
 import { signout } from '../store/actions/AuthAction';
 
 export default ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const state = useSelector((state) => state.Auth);
+
+  const prop = () => {
+    if (auth().currentUser.photoURL) {
+      return {
+        source: {
+          uri: auth().currentUser.photoURL,
+        },
+        title: auth().currentUser.displayName[0].toUpperCase(),
+      };
+    } else {
+      return {
+        title: auth().currentUser.displayName[0].toUpperCase(),
+      };
+    }
+  };
 
   useEffect(() => {
     navigation.setOptions({
@@ -28,6 +44,7 @@ export default ProfileScreen = ({ navigation }) => {
         >
           <TouchableOpacity
             style={{
+              backfaceVisibility: 'hidden',
               width: 40,
               height: 40,
               justifyContent: 'center',
@@ -35,7 +52,7 @@ export default ProfileScreen = ({ navigation }) => {
             }}
             onPress={() => {}}
           >
-            <Icon name="user-edit" color="#888888" type="font-awesome-5" />
+            <Icon name="user-edit" color="#88888800" type="font-awesome-5" />
           </TouchableOpacity>
           <TouchableOpacity
             style={{
@@ -55,15 +72,28 @@ export default ProfileScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       ),
+      headerLeft: (props) => (
+        <HeaderBackButton
+          {...props}
+          onPress={() => {
+            navigation.navigate('home', {
+              refresh: false,
+            });
+          }}
+        />
+      ),
     });
   }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ backgroundColor: 'red' }}>
-        <Text>Home Screen</Text>
-      </View>
-      <Button title="Go to User" onPress={() => {}} />
+      <Avatar backgroundColor="#c3c3c3" rounded size="xlarge" {...prop()} />
+      <Text
+        style={{ marginTop: 20, alignItems: 'center', textAlign: 'center' }}
+        h1
+      >
+        {auth().currentUser.displayName}
+      </Text>
     </SafeAreaView>
   );
 };
@@ -71,8 +101,9 @@ export default ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ececec',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 100,
   },
 });

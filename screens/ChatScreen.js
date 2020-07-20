@@ -1,14 +1,108 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, Text, View, Button, FlatList } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch, useSelector } from 'react-redux';
-
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
+import { HeaderBackButton } from '@react-navigation/stack';
 import Msg from '../components/Msg';
 import MsgInput from '../components/MsgInput';
+import { Avatar } from 'react-native-elements';
+import database from '@react-native-firebase/database';
+import auth from '@react-native-firebase/auth';
 
 export default ChatScreen = ({ navigation, route }) => {
-  const dispatch = useDispatch();
-  const availableMeals = useSelector((state) => state);
+  const [mock, setmock] = useState([]);
+  const [MsgCount, setMsgCount] = useState(0);
+  const [IsLoading, setIsLoading] = useState(true);
+  const [OnetimeCall, setOnetimeCall] = useState(false);
+  const [NewElement, setNewElement] = useState([]);
+  const [IsFirstCalled, setIsFirstCalled] = useState(false);
+  const [Refresh, setRefresh] = useState(false);
+  const [FirstTimeRefresh, setFirstTimeRefresh] = useState(false);
+  const [InitialVal, setInitialVal] = useState(-1);
+  const [counter, setcounter] = useState(0);
+
+  useEffect(() => {
+    if (NewElement.length !== 0) {
+      if (IsFirstCalled) {
+        setmock([...NewElement, ...mock]);
+        setRefresh(false);
+      } else {
+        setmock([...NewElement]);
+        setIsFirstCalled(true);
+      }
+    }
+  }, [NewElement]);
+
+  useEffect(() => {
+    let onValueChange = null;
+    if (OnetimeCall) {
+      onValueChange = database()
+        .ref(`/rooms/${route.params.room}/msgs`)
+        .orderByChild('time')
+        .limitToLast(1)
+        .on('child_added', (snapshot) => {
+          const oneEle = [];
+          oneEle.push({
+            key: snapshot.key,
+            id: snapshot.val().time,
+            message: snapshot.val().msg,
+            side:
+              auth().currentUser.uid === snapshot.val().uid ? 'right' : 'left',
+          });
+          setNewElement(oneEle);
+        });
+    }
+
+    return () => {
+      if (onValueChange)
+        database()
+          .ref(`/rooms/${route.params.room}/msgs`)
+          .off('child_added', onValueChange);
+    };
+  }, [OnetimeCall]);
+
+  const getNewData = useCallback(() => {
+    setcounter(counter + 1);
+    if (FirstTimeRefresh) {
+      setIsLoading(true);
+      getLast20();
+    } else {
+    }
+  }, [FirstTimeRefresh, counter]);
+
+  const getLast20 = useCallback(() => {
+    const newMsgCount = MsgCount + 20;
+    database()
+      .ref(`/rooms/${route.params.room}/msgs`)
+      .orderByChild('time')
+      .limitToLast(newMsgCount)
+      .once('value')
+      .then((snapshot) => {
+        setMsgCount(snapshot.numChildren());
+        const listMain = [];
+        snapshot.forEach((v) => {
+          listMain.push({
+            key: v.key,
+            id: v.toJSON().time,
+            message: v.toJSON().msg,
+            side: auth().currentUser.uid === v.toJSON().uid ? 'right' : 'left',
+          });
+        });
+        return listMain;
+      })
+      .then((v) => {
+        setIsLoading(false);
+        setFirstTimeRefresh(true);
+        setRefresh(true);
+        setmock(v.reverse());
+        setInitialVal(0.1);
+      })
+      .catch((e) => {});
+  }, [MsgCount]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -16,48 +110,109 @@ export default ChatScreen = ({ navigation, route }) => {
       headerStyle: {
         backgroundColor: '#dffff0',
       },
+      headerLeft: (props) => (
+        <HeaderBackButton
+          {...props}
+          onPress={() => {
+            navigation.navigate('home', {
+              refresh: true,
+            });
+          }}
+        />
+      ),
     });
   }, [navigation]);
 
   useEffect(() => {
-    navigation.setOptions({ title: route.params.name });
+    const prop = () => {
+      if (route.params.proPic) {
+        return {
+          source: {
+            uri: route.params.proPic,
+          },
+          title: route.params.name[0].toUpperCase(),
+        };
+      } else {
+        return {
+          title: route.params.name[0].toUpperCase(),
+        };
+      }
+    };
+    navigation.setOptions({
+      title: route.params.name,
+      headerRight: () => (
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginRight: 30,
+            width: 40,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              width: 40,
+              height: 40,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar
+              {...prop()}
+              containerStyle={{ backgroundColor: '#c1c1c1' }}
+              rounded
+            />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+    getLast20();
+    setOnetimeCall(true);
   }, []);
 
-  const mock = [
-    { id: 1, message: 'Hello', side: 'left' },
-    { id: 2, message: 'Hi!', side: 'right' },
-    { id: 3, message: 'Hello', side: 'left' },
-    { id: 4, message: 'Hi!', side: 'right' },
-    { id: 5, message: 'Hello', side: 'left' },
-    { id: 6, message: 'Hi!', side: 'right' },
-    { id: 7, message: 'Hello', side: 'left' },
-    { id: 8, message: 'Hi!', side: 'right' },
-    { id: 9, message: 'Hello', side: 'left' },
-    { id: 10, message: 'Hi!', side: 'right' },
-    { id: 11, message: 'Hello', side: 'left' },
-    { id: 12, message: 'Hi!', side: 'right' },
-    { id: 13, message: 'Hello', side: 'left' },
-    { id: 14, message: 'Hi!', side: 'right' },
-    { id: 15, message: 'Hello', side: 'left' },
-    { id: 16, message: 'vvvvvvvvvvvvvvvvvv', side: 'right' },
-  ];
   return (
     <>
       <View style={styles.messagesContainer}>
+        {IsLoading ? (
+          <View
+            style={{
+              backgroundColor: 'transparent',
+              zIndex: 1,
+              justifyContent: 'center',
+              position: 'absolute',
+              top: 0,
+              left: '50%',
+              width: 50,
+              height: 50,
+              transform: [{ translateX: -25 }],
+            }}
+          >
+            <ActivityIndicator size="large" />
+          </View>
+        ) : null}
         <FlatList
           inverted
+          style={{ backgroundColor: '#dfe2e5' }}
+          onEndReached={() => {
+            getNewData();
+          }}
+          refreshing={Refresh}
+          onEndReachedThreshold={InitialVal}
           data={mock}
+          extraData={mock}
           keyExtractor={(item) => {
-            return item.id.toString();
+            return item.key.toString();
           }}
           renderItem={function ({ item }) {
-            return <Msg side={item.side} message={item.message} />;
+            return (
+              <Msg side={item.side} message={item.message} time={item.id} />
+            );
           }}
         />
       </View>
 
       <View style={styles.inputContainer}>
-        <MsgInput />
+        <MsgInput {...route.params} />
       </View>
     </>
   );
@@ -66,11 +221,12 @@ export default ChatScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   messagesContainer: {
     height: '100%',
-    paddingBottom: 80,
+    paddingBottom: 90,
   },
   inputContainer: {
     width: '100%',
-    height: 80,
+    minHeight: 90,
+    height: 'auto',
     position: 'absolute',
     bottom: 0,
     paddingVertical: 10,

@@ -9,6 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { navigationRef } from '../ExternalRootNavigation';
 import UserNavigation from './UserNavigation';
 import AuthNavigation from './AuthNavigation';
+// action
+import { autologin } from '../store/actions/AuthAction';
+import auth from '@react-native-firebase/auth';
 // render app
 const Stack = createStackNavigator();
 
@@ -22,22 +25,19 @@ export default RootNavigation = (props) => {
   useEffect(() => {
     setIsLoading(state.isLoading);
     setUserToken(state.userToken);
-    console.log(state.isLoading, state.userToken);
   }, [state]);
 
   useEffect(() => {
-    const bootstrapAsync = async () => {
-      let userToken;
-      try {
-        userToken = await AsyncStorage.getItem('CAP_101');
-        dispatch({ type: 'RESTORE_TOKEN', token: userToken });
-      } catch (e) {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
+    const unsubscribe = auth().onAuthStateChanged((user) => {
+      if (user && user.emailVerified) {
+        dispatch(autologin(user.uid));
+      } else {
+        setIsLoading(false);
       }
+    });
+    return () => {
+      unsubscribe();
     };
-    bootstrapAsync();
   }, []);
 
   const splash = () => {
