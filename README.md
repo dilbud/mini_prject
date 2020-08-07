@@ -6,15 +6,15 @@
     minimum Android 5.0 Lollipop (API level 21) and upto
 ## Installation
 requires [Node.js](https://nodejs.org/) v12.0.0+ to run.
-follow the instruction [here](https://reactnative.dev/docs/environment-setup) to setup the development envirenment
-follow the instruction [here](https://reactnative.dev/docs/running-on-device) to setup the development device
+follow the instruction [here](https://reactnative.dev/docs/environment-setup) to setup the development envirenment,
+follow the instruction [here](https://reactnative.dev/docs/running-on-device) to setup the development device,
 Install the dependencies and devDependencies
 ```cmd
-> cd cap
+> cd mini_prject
 > npm install
 ```
 ## Development
-Open your Terminal in cap directory and run these commands.
+Open your Terminal in mini_prject directory and run these commands.
 First Tab: for start Metro
 ```cmd
 > npx react-native start
