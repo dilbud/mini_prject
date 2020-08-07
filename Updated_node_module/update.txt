@@ -1,0 +1,7 @@
+For someone who has the same problem, I fixed it like this:
+
+ADD strokeLinecap={'square'} on Line 141, as property of at index.js file
+
+Head to tranformMatrixIntoPath.js file and modify the algorithm
+
+UPDATE Line 2 add const cellSize = size / matrix.length - 0.1 UPDATE Line 9 add path += 'M${cellSize * j + 9} ${cellSize / 2 + cellSize * i}'
