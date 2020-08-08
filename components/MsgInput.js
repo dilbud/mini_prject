@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { StyleSheet, View, TextInput } from 'react-native';
+import { StyleSheet, View, TextInput, Dimensions } from 'react-native';
 import { Icon } from 'react-native-elements';
 import database from '@react-native-firebase/database';
 import auth from '@react-native-firebase/auth';
@@ -28,11 +28,13 @@ export default MsgInput = (props) => {
     <View style={styles.container}>
       <View style={styles.inputContainer}>
         <TextInput
+          scrollEnabled={true}
           multiline={true}
-          maxLength={30}
           style={styles.input}
           value={Message}
-          onChangeText={setMessage}
+          onChangeText={(val) => {
+            setMessage(val);
+          }}
           placeholder="Write you message"
         />
       </View>
@@ -60,13 +62,15 @@ const styles = StyleSheet.create({
     width: '70%',
   },
   input: {
-    height: 'auto',
+    maxHeight: Dimensions.get('window').height / 4,
     borderColor: '#c5c9cc',
+    color: '#3f3f3f',
+    fontWeight: 'bold',
     borderWidth: 1,
     borderRadius: 15,
     flexDirection: 'row',
     paddingHorizontal: 10,
-    fontSize: 14,
+    fontSize: 15,
     paddingHorizontal: 15,
   },
 });

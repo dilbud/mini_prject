@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { ListItem, Avatar, Icon } from 'react-native-elements';
+import { ListItem, Avatar, Icon, Text } from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
@@ -146,19 +146,23 @@ export default HomeScreen = ({ navigation, route }) => {
   };
 
   return (
-    <FlatList
-      keyExtractor={(item, index) => index.toString()}
-      data={List}
-      renderItem={renderItem}
-    />
+    <>
+      <FlatList
+        keyExtractor={(item, index) => index.toString()}
+        data={List}
+        renderItem={renderItem}
+      />
+      <View style={styles.myDetails}>
+        <Text h4>17000122</Text>
+        <Text h4>Buddika HGD</Text>
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
+  myDetails: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
   },
 });

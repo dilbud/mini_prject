@@ -32,15 +32,6 @@ export default AddUserScreen = ({ navigation, route }) => {
             }).length === 0
           ) {
             const room = firestore().collection('rooms').doc().id;
-            // update current user
-            firestore()
-              .collection('users')
-              .doc(auth().currentUser.uid)
-              .update({
-                rooms: firestore.FieldValue.arrayUnion({ user: Input, room }),
-              })
-              .then((v) => {})
-              .catch((e) => {});
             // update other user
             firestore()
               .collection('users')
@@ -51,7 +42,20 @@ export default AddUserScreen = ({ navigation, route }) => {
                   room,
                 }),
               })
-              .then((v) => {})
+              .then((v) => {
+                // update current user
+                firestore()
+                  .collection('users')
+                  .doc(auth().currentUser.uid)
+                  .update({
+                    rooms: firestore.FieldValue.arrayUnion({
+                      user: Input,
+                      room,
+                    }),
+                  })
+                  .then((v) => {})
+                  .catch((e) => {});
+              })
               .catch((e) => {});
           }
         })

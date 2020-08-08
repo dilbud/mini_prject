@@ -24,6 +24,37 @@ export default ChatScreen = ({ navigation, route }) => {
   const [FirstTimeRefresh, setFirstTimeRefresh] = useState(false);
   const [InitialVal, setInitialVal] = useState(-1);
   const [counter, setcounter] = useState(0);
+  const [AutoHeight, setAutoHeight] = useState(90);
+
+  useEffect(() => {
+    database()
+      .ref(`/rooms/${route.params.room}/msgs`)
+      .orderByChild('time')
+      .limitToLast(15)
+      .once('value')
+      .then((snapshot) => {
+        setMsgCount(snapshot.numChildren());
+        const listMain = [];
+        snapshot.forEach((v) => {
+          listMain.push({
+            key: v.key,
+            id: v.toJSON().time,
+            message: v.toJSON().msg,
+            side: auth().currentUser.uid === v.toJSON().uid ? 'right' : 'left',
+          });
+        });
+        return listMain;
+      })
+      .then((v) => {
+        setIsLoading(false);
+        setFirstTimeRefresh(true);
+        setRefresh(true);
+        setmock(v.reverse());
+        setInitialVal(0.1);
+        setOnetimeCall(true);
+      })
+      .catch((e) => {});
+  }, []);
 
   useEffect(() => {
     if (NewElement.length !== 0) {
@@ -31,7 +62,9 @@ export default ChatScreen = ({ navigation, route }) => {
         setmock([...NewElement, ...mock]);
         setRefresh(false);
       } else {
-        setmock([...NewElement]);
+        if (mock.length === 0) {
+          setmock([...NewElement, ...mock]);
+        }
         setIsFirstCalled(true);
       }
     }
@@ -58,24 +91,27 @@ export default ChatScreen = ({ navigation, route }) => {
     }
 
     return () => {
-      if (onValueChange)
+      if (onValueChange) {
         database()
           .ref(`/rooms/${route.params.room}/msgs`)
           .off('child_added', onValueChange);
+      }
     };
   }, [OnetimeCall]);
 
   const getNewData = useCallback(() => {
-    setcounter(counter + 1);
-    if (FirstTimeRefresh) {
-      setIsLoading(true);
-      getLast20();
-    } else {
+    if (mock.length >= 15) {
+      setcounter(counter + 1);
+      if (FirstTimeRefresh) {
+        setIsLoading(true);
+        getLast20();
+      } else {
+      }
     }
-  }, [FirstTimeRefresh, counter]);
+  }, [FirstTimeRefresh, counter, mock]);
 
   const getLast20 = useCallback(() => {
-    const newMsgCount = MsgCount + 20;
+    const newMsgCount = MsgCount + 10;
     database()
       .ref(`/rooms/${route.params.room}/msgs`)
       .orderByChild('time')
@@ -123,6 +159,7 @@ export default ChatScreen = ({ navigation, route }) => {
     });
   }, [navigation]);
 
+  // profile pic
   useEffect(() => {
     const prop = () => {
       if (route.params.proPic) {
@@ -166,13 +203,11 @@ export default ChatScreen = ({ navigation, route }) => {
         </View>
       ),
     });
-    getLast20();
-    setOnetimeCall(true);
   }, []);
 
   return (
-    <>
-      <View style={styles.messagesContainer}>
+    <View style={{ backgroundColor: '#dfe2e5' }}>
+      <View style={[styles.messagesContainer, { paddingBottom: AutoHeight }]}>
         {IsLoading ? (
           <View
             style={{
@@ -198,6 +233,7 @@ export default ChatScreen = ({ navigation, route }) => {
           }}
           refreshing={Refresh}
           onEndReachedThreshold={InitialVal}
+          initialNumToRender={MsgCount}
           data={mock}
           extraData={mock}
           keyExtractor={(item) => {
@@ -211,17 +247,21 @@ export default ChatScreen = ({ navigation, route }) => {
         />
       </View>
 
-      <View style={styles.inputContainer}>
+      <View
+        style={styles.inputContainer}
+        onLayout={(event) => {
+          setAutoHeight(+event.nativeEvent.layout.height.toFixed(0));
+        }}
+      >
         <MsgInput {...route.params} />
       </View>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   messagesContainer: {
     height: '100%',
-    paddingBottom: 90,
   },
   inputContainer: {
     width: '100%',

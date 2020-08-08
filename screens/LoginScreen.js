@@ -16,10 +16,6 @@ export default LoginScreen = ({ navigation }) => {
   const state = useSelector((state) => state.Auth);
 
   useEffect(() => {
-    navigation.navigate('home01');
-  }, []);
-
-  useEffect(() => {
     ToggleSecure ? setToggleEye('eye-slash') : setToggleEye('eye');
   }, [ToggleSecure]);
 

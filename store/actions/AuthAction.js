@@ -10,6 +10,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 export const signup = (email, password, name) => {
+  navigate('Splash');
   return (dispatch, getState) => {
     let unsubscribe = () => {};
     auth()
@@ -32,17 +33,21 @@ export const signup = (email, password, name) => {
                         rooms: [],
                       })
                       .then((v) => {
+                        navigate('login');
                         alert('Account Created', 'Please verify Email');
                       })
                       .catch((dbError) => {
+                        navigate('signup');
                         alert('please Try again', 'Check your connection');
                       });
                   })
                   .catch((eVError) => {
+                    navigate('signup');
                     alert('please Try again', 'Check your connection');
                   });
               })
               .catch((uPError) => {
+                navigate('signup');
                 alert('please Try again', 'Check your connection');
               });
         });
@@ -52,7 +57,8 @@ export const signup = (email, password, name) => {
         });
       })
       .catch((uCError) => {
-        alert('please Try again', 'Check your connection');
+        navigate('signup');
+        alert('please Try again', 'user already exist');
       })
       .finally(() => {
         unsubscribe();
@@ -61,6 +67,7 @@ export const signup = (email, password, name) => {
 };
 
 export const signin = (email, password) => {
+  navigate('Splash');
   return (dispatch, getState) => {
     auth()
       .signInWithEmailAndPassword(email, password)
@@ -73,10 +80,12 @@ export const signin = (email, password) => {
             },
           });
         } else {
+          navigate('login');
           alert('Email Verification', 'Please Verify Your Email');
         }
       })
       .catch((error) => {
+        navigate('login');
         alert('login', 'User Not Found');
       });
   };
